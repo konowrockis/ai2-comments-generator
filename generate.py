@@ -23,18 +23,21 @@ model.add(Dense(n_vocab, activation='softmax'))
 model.load_weights("./results/test_3/weights-improvement-04-1.7086.hdf5")
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
-seed = list("\0Americans think they are either Jesse James or the Lone Ranger. Get a grips folks. We don't carry guns in the UK & have little fun violence. More US citizens killed by children than terrorists! Mass gun ownership is madness!".lower())[:seq_length]
+seed = list("\0Americanscanscanscanscanscans".lower())[:seq_length]
 pattern = [char_to_int[char] for char in seed]
 # print "Seed:"
 # print "\"", ''.join([int_to_char[value] for value in pattern]), "\""
 # generate characters
 sys.stdout.write(''.join(seed))
 
+temp = 2
 for i in range(1000):
 	x = numpy.reshape(pattern, (1, len(pattern), 1))
 	x = x / float(n_vocab)
 	prediction = model.predict(x, verbose=0)
-	index = numpy.argmax(prediction)
+	indices = numpy.argpartition(numpy.reshape(prediction, (n_vocab)), - temp)[ - temp:]
+	index2 = numpy.random.choice(temp, 1)[0]
+	index = indices[index2]
 	result = int_to_char[index]
 	seq_in = [int_to_char[value] for value in pattern]
 	sys.stdout.write(result)
